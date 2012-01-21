@@ -1,9 +1,10 @@
 """
 This is the md5compare module.
 
-It supplies two functions, md5compare(), which will accept two files and 
-compare their md5 sums to see if they are the same file, and md5sum(), 
-which returns the md5 sum of a file. For example,
+It supplies three functions, comparelist(), which will accept two
+lists of files and md5compare() them, md5compare(), which will accept 
+two files and compare their md5 sums to see if they are the same file, 
+and md5sum(), which returns the md5 sum of a file. For example,
 
 >>> md5compare("source","restore")
 True
@@ -39,6 +40,17 @@ def md5sum(f):
         for b in iter(lambda: source.read(8192), ''):
             thesum.update(b)
     return thesum.hexdigest()
+
+def comparelist(sources, restores):
+    """
+    >>> comparelist(["originals/source","originals/notrestore","originals/restore"],["source","notrestore","restore"])
+    [True, False, True]
+    """
+    results = []
+    compares = zip(sources, restores)
+    for i in compares:
+        results.append(md5compare(i[0], i[1]))
+    return results
 
 if __name__ == "__main__":
     import doctest
