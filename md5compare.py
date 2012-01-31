@@ -8,9 +8,14 @@ and md5sum(), which returns the md5 sum of a file. For example,
 
 >>> md5compare("source","restore")
 True
+
+It also currently supplies the restore() function, which will eventually
+accept some filenames/paths and restore them from tape, but currently just
+copies the appropriate files from a holding directory.
 """
 
 import hashlib
+import shutil
 
 def md5compare(source, modified):
     """
@@ -51,6 +56,17 @@ def comparelist(sources, restores):
     for i in compares:
         results.append(md5compare(i[0], i[1]))
     return results
+
+def restore(targets):
+    """
+    >>> comparelist(["originals/source", "originals/notrestore","originals/restore"],restore(["source","notrestore","restore"])
+    [True, False, True]
+    """
+    dests = []
+    for i in targets:
+        shutil.copy("vtape/"+i,"restored/") 
+        dests.append("restored/"+i)
+    return dests   
 
 if __name__ == "__main__":
     import doctest
