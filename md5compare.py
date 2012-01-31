@@ -59,7 +59,7 @@ def comparelist(sources, restores):
 
 def restore(targets):
     """
-    >>> comparelist(["originals/source", "originals/notrestore","originals/restore"],restore(["source","notrestore","restore"])
+    >>> comparelist(["originals/source", "originals/notrestore","originals/restore"],restore(["source","notrestore","restore"]))
     [True, False, True]
     """
     dests = []
