@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 This is the md5compare module.
 
