@@ -18,9 +18,10 @@ copies the appropriate files from a holding directory.
 
 from hashlib import md5
 from shutil import copy
-from subprocess import call
+from smtplib import SMTP, SMTPRecipientsRefused
 
-EMAIL = [False, "youremailhere@you.com"]
+#EMAIL = [False, "youremailhere@you.com"]
+EMAIL = [True, "edilaic@eecs.berkeley.edu"]
 
 def md5compare(source, modified):
     """
@@ -73,7 +74,7 @@ def comparelist(sources, restores):
     else:
         print "All files matched originals."
     if EMAIL[0]:
-        sendmail(failures)
+        notifymail(failures)
     return results
 
 def restore(targets):
@@ -93,10 +94,29 @@ def restore(targets):
             return "Could not find file '%s'." % ex.filename
     return dests
 
-def sendmail(failures):
-    call("mail", "-s", "Backup verification result", EMAIL[1])
+def notifymail(failures):
+    """
+    >>> notifymail([])
+
+    >>> notifymail(["failfile","horriblemistake"])
+
+    """
+    body = "From: amandabackup@backup.EECS.Berkeley.EDU\r\nTo: "+EMAIL[1]+\
+        "\r\nSubject: Automated backup verification\r\n\r\n"
+    if len(failures) > 0:
+        body += "Files that failed verification:\r\n"
+        for i in failures:
+            body += i + "\r\n"
+    else:
+        body += "All files successfully verified.\r\n"
+    relay = SMTP("gateway.eecs.berkeley.edu")
+    try:
+        relay.sendmail("amandabackup@backup.EECS.Berkeley.EDU", [EMAIL[1]], \
+                           body)
+    except SMTPRecipientsRefused:
+        pass
+    relay.quit()
     return
-#Need to pipe the contents in somehow.
 
 if __name__ == "__main__":
     import doctest
