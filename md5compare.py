@@ -49,17 +49,27 @@ def md5sum(f):
 def comparelist(sources, restores):
     """
     >>> comparelist(["originals/source","originals/notrestore","originals/restore"],["source","notrestore","restore"])
+    File 'notrestore' did not match original.
     [True, False, True]
     """
     results = []
+    failures = []
     compares = zip(sources, restores)
     for i in compares:
         results.append(md5compare(i[0], i[1]))
+        if not results[-1]:
+            failures.append(i[1])
+    if failures:
+        for i in failures:
+            print "File '%s' did not match original." % i
+    else:
+        print "All files matched originals."
     return results
 
 def restore(targets):
     """
     >>> comparelist(["originals/source", "originals/notrestore","originals/restore"],restore(["source","notrestore","restore"]))
+    File 'restored/notrestore' did not match original.
     [True, False, True]
     >>> restore(["notafile"])
     "Could not find file 'vtape/notafile'."
