@@ -17,6 +17,8 @@ copies the appropriate files from a holding directory.
 import hashlib
 import shutil
 
+email=[False, "youremailhere@you.com"]
+
 def md5compare(source, modified):
     """
     >>> md5compare("source","restore")
@@ -51,6 +53,9 @@ def comparelist(sources, restores):
     >>> comparelist(["originals/source","originals/notrestore","originals/restore"],["source","notrestore","restore"])
     File 'notrestore' did not match original.
     [True, False, True]
+    >>> comparelist(["originals/source","originals/restore"],["source","restore"])
+    All files matched originals.
+    [True, True]
     """
     results = []
     failures = []
@@ -64,6 +69,8 @@ def comparelist(sources, restores):
             print "File '%s' did not match original." % i
     else:
         print "All files matched originals."
+    if email[0]:
+        sendmail(failures)
     return results
 
 def restore(targets):
@@ -81,7 +88,12 @@ def restore(targets):
             dests.append("restored/"+i)
         except IOError as e:
             return "Could not find file '%s'." % e.filename
-    return dests   
+    return dests
+
+def sendmail(failures):
+    subprocess.call("mail", "-s", "Backup verification result", email[1])
+    return
+#Need to pipe the contents in somehow.
 
 if __name__ == "__main__":
     import doctest
