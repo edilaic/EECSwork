@@ -94,7 +94,20 @@ def restore(targets):
             return "Could not find file '%s'." % ex.filename
     return dests
 
+def notify():
+    # could call notifymail()
+    # or could just use logger
+    fail
+
+def notifysimple():
+
 def notifymail(failures):
+    # FIXME: cannot send mail because of lack of unauthenticated relay # or appropriate credentials
+    # 
+    # initially only timebox 15 minutes on getting this to work on
+    # backup.eecs, or deprioritize. in the meantime just implement a
+    # SIMPLE notify
+    
     """
     >>> notifymail([])
 
