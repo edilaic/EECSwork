@@ -16,10 +16,11 @@ accept some filenames/paths and restore them from tape, but currently just
 copies the appropriate files from a holding directory.
 """
 
-import hashlib
-import shutil
+from hashlib import md5
+from shutil import copy
+from subprocess import call
 
-email=[False, "youremailhere@you.com"]
+EMAIL = [False, "youremailhere@you.com"]
 
 def md5compare(source, modified):
     """
@@ -34,20 +35,20 @@ def md5compare(source, modified):
     """
     try:
         return md5sum(source) == md5sum(modified)
-    except IOError as e:
-        return "Could not find file '%s'." % e.filename
+    except IOError as ex:
+        return "Could not find file '%s'." % ex.filename
 
-def md5sum(f):
+def md5sum(filename):
     """
     >>> md5sum("source")
     '944c44e9f1f00ce936819d1844cc5850'
     >>> md5sum("notrestore")
     '11b841684e1428ac02feed1e691b6ba2'
     """
-    thesum = hashlib.md5()
-    with open(f, 'rb') as source:
-        for b in iter(lambda: source.read(8192), ''):
-            thesum.update(b)
+    thesum = md5()
+    with open(filename, 'rb') as source:
+        for buf in iter(lambda: source.read(8192), ''):
+            thesum.update(buf)
     return thesum.hexdigest()
 
 def comparelist(sources, restores):
@@ -71,7 +72,7 @@ def comparelist(sources, restores):
             print "File '%s' did not match original." % i
     else:
         print "All files matched originals."
-    if email[0]:
+    if EMAIL[0]:
         sendmail(failures)
     return results
 
@@ -86,14 +87,14 @@ def restore(targets):
     dests = []
     for i in targets:
         try:
-            shutil.copy("vtape/"+i,"restored/") 
+            copy("vtape/"+i,"restored/") 
             dests.append("restored/"+i)
-        except IOError as e:
-            return "Could not find file '%s'." % e.filename
+        except IOError as ex:
+            return "Could not find file '%s'." % ex.filename
     return dests
 
 def sendmail(failures):
-    subprocess.call("mail", "-s", "Backup verification result", email[1])
+    call("mail", "-s", "Backup verification result", EMAIL[1])
     return
 #Need to pipe the contents in somehow.
 
