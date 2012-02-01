@@ -131,6 +131,25 @@ def notifymail(failures):
     relay.quit()
     return
 
+def doit():
+    # really, let's change the name to something good! cuz doit() sucks
+    # as a name.
+
+    # Initiate backups
+    backup()
+
+    # Select restore fileset
+    fileset = select_fileset()
+
+    # Perform restore
+    restore(fileset, destination)
+
+    # Compare restored files
+    compare(original, restored)
+
+    # Notify success or failure
+    notify("yay-or-nay! whee")
+
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
