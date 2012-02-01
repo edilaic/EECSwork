@@ -1,0 +1,10 @@
+
+* FIX: pylint warning for hashlib.md5()
+http://www.logilab.org/blogentry/78354?vid=activitystream
+
+This article explains the dynamic magic that hashlib uses that
+confuses pylint. The solution is to use a pylint plugin as explained
+in the article:
+
+pylint -E --load-plugins astng_hashlib example.py
+
