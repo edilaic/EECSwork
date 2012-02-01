@@ -61,11 +61,16 @@ def restore(targets):
     """
     >>> comparelist(["originals/source", "originals/notrestore","originals/restore"],restore(["source","notrestore","restore"]))
     [True, False, True]
+    >>> restore(["notafile"])
+    "Could not find file 'vtape/notafile'."
     """
     dests = []
     for i in targets:
-        shutil.copy("vtape/"+i,"restored/") 
-        dests.append("restored/"+i)
+        try:
+            shutil.copy("vtape/"+i,"restored/") 
+            dests.append("restored/"+i)
+        except IOError as e:
+            return "Could not find file '%s'." % e.filename
     return dests   
 
 if __name__ == "__main__":
